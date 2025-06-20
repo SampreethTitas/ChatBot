@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+    <h2>Admin Panel - All Chat Logs</h2>
+    <p><a href="/export">Download CSV</a></p>
+    <table border="1">
+        <tr>
+            <th>Username</th>
+            <th>User Message</th>
+            <th>Bot Response</th>
+            <th>Timestamp</th>
+        </tr>
+        {% for chat in chats %}
+        <tr>
+            <td>{{ chat.user.username }}</td>
+            <td>{{ chat.user_message }}</td>
+            <td>{{ chat.bot_response }}</td>
+            <td>{{ chat.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

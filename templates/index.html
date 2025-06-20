@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ChatBot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+    <script>
+        let socket;
+        window.onload = () => {
+            socket = io();
+
+            const form = document.getElementById('chat-form');
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                const message = document.getElementById('message');
+                const userText = message.value;
+                if (!userText) return;
+                addMessage('You', userText);
+                socket.emit('user_message', { message: userText });
+                message.value = '';
+            });
+
+            socket.on('bot_response', data => {
+                addMessage('Bot', data.message);
+            });
+        };
+
+        function addMessage(sender, text) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</head>
+<body>
+    <h2>Chat with Bot</h2>
+    <p><a href="/logout">Logout</a></p>
+    <div id="chat-box" style="border:1px solid #ccc; height:300px; overflow-y:scroll; padding:10px;">
+                {% for chat in chats %}
+            <div class="message user"><strong>You:</strong> {{ chat.user_message }}</div>
+            <div class="message bot"><strong>Bot:</strong> {{ chat.bot_response }}</div>
+        {% endfor %}
+
+    </div>
+    <form id="chat-form">
+        <input type="text" id="message" placeholder="Say something..." required>
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
